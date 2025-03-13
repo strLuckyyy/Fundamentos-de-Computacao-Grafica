@@ -1,5 +1,5 @@
 # Fundamentos-de-Computacao-Grafica
-## 2º Semestre - 01/25
+## 4º Semestre - 01/25
   * **Matéria**: Fundamentos de Computação Gráfica
   * **Professor**: ROSSANA BAPTISTA QUEIROZ
   * **Tecnologia**: <br/> [![My Skills](https://skillicons.dev/icons?i=cpp)](https://skillicons.dev)
