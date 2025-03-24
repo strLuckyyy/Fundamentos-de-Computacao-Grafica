@@ -26,6 +26,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <cmath>
 
 using namespace std;
 
@@ -43,7 +44,7 @@ int setupShader();
 int setupGeometry();
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 800, HEIGHT = 800;
 
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
 const GLchar *vertexShaderSource = R"(
@@ -136,6 +137,7 @@ int main()
 	double prev_s = glfwGetTime();	// Define o "tempo anterior" inicial.
 	double title_countdown_s = 0.1; // Intervalo para atualizar o título da janela com o FPS.
 
+	float colorValue = 0.0;
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
@@ -172,11 +174,13 @@ int main()
 
 		glBindVertexArray(VAO); // Conectando ao buffer de geometria
 
-		glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f); // enviando cor para variável uniform inputColor
+		colorValue = abs(cos((float) glfwGetTime()));
+
+		glUniform4f(colorLoc, colorValue, 0.0f, 0.0f, 1.0f); // enviando cor para variável uniform inputColor
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// glBindVertexArray(0); // Desnecessário aqui, pois não há múltiplos VAOs
 
@@ -266,10 +270,12 @@ int setupGeometry()
 		// x   y     z
 		// T0
 		-0.5, -0.5, 0.0, // v0
-		0.5, -0.5, 0.0,	 // v1
-		0.0, 0.5, 0.0,	 // v2
-						 // T1
-
+		 0.5, -0.5, 0.0, // v1
+		 0.0, 0.5, 0.0,	 // v2
+		// T1
+		-0.65, 0.33, 0.0,
+		-0.27, 0.53, 0.0,
+		-0.61, 0.79, 0.0
 	};
 
 	GLuint VBO, VAO;
