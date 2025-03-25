@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10...4.0)
 project(FCG2025-1)
 
 # Define o padrão do C++
@@ -28,9 +28,8 @@ FetchContent_MakeAvailable(glfw glm)
 # Adiciona as pastas de cabeçalhos
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/common)
-include_directories(${CMAKE_SOURCE_DIR}/include/glad)
+include_directories(${CMAKE_SOURCE_DIR}/include/glad/glad)
 include_directories(${glm_SOURCE_DIR})
-
 
 # Lista de exemplos/exercícios podem ser colocados aqui também
 set(EXERCISES
@@ -63,6 +62,6 @@ endif()
 # Cria os executáveis
 foreach(EXERCISE ${EXERCISES})
     add_executable(${EXERCISE} src/${EXERCISE}.cpp ${GLAD_C_FILE})
-    target_include_directories(${EXERCISE} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR})
+    target_include_directories(${EXERCISE} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad/glad ${glm_SOURCE_DIR})
     target_link_libraries(${EXERCISE} glfw ${OPENGL_LIBS})
 endforeach()
