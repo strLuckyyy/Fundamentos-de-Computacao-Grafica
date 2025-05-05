@@ -2,7 +2,7 @@
 // Created by abraa on 5/4/2025.
 //
 
-#include "../../include/utils/SimplePolygon.h"
+#include "../../include/polygons/SimplePolygon.h"
 
 #include <cmath>
 

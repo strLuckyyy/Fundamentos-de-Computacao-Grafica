@@ -8,10 +8,9 @@
 
 class StarPolygon final : public Polygon {
 public:
-  StarPolygon(int x, int y, float radius, int segments, bool filled, int points, float innerRadius);
+  StarPolygon(float x, float y, float radius, int points, bool filled, float innerRadius);
 
 private:
-  int points;
   float innerRadius;
 
   // Metodos

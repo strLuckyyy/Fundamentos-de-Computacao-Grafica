@@ -2,25 +2,23 @@
 // Created by abraa on 5/3/2025.
 //
 
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <iostream>
 #include <string>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <unordered_map>
 
 using namespace std;
 
-// Protótipo da função de callback de teclado
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
-// Protótipos das funções
-int setupShader();
-int setupGeometry();
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+GLuint setupShader();
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
-const GLuint WIDTH = 800, HEIGHT = 800;
+constexpr GLuint WIDTH = 800, HEIGHT = 800;
 
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
-const GLchar *vertexShaderSource = R"(
+auto *vertexShaderSource = R"(
  #version 400
  layout (location = 0) in vec3 position;
  void main()
@@ -30,7 +28,7 @@ const GLchar *vertexShaderSource = R"(
  )";
 
 // Código fonte do Fragment Shader (em GLSL): ainda hardcoded
-const GLchar *fragmentShaderSource = R"(
+auto *fragmentShaderSource = R"(
  #version 400
  uniform vec4 inputColor;
  out vec4 color;
@@ -42,3 +40,72 @@ const GLchar *fragmentShaderSource = R"(
 
 int main() {
 }
+
+// SHADER //
+enum ShaderType { VERTEX, FRAGMENT, PROGRAM };
+
+// Mapeamento para strings
+const unordered_map<ShaderType, std::string> ShaderTypeStrings = {
+  {VERTEX, "VERTEX"},
+  {FRAGMENT, "FRAGMENT"},
+  {PROGRAM, "PROGRAM"}
+};
+
+
+void checkShader(const GLuint shader, const ShaderType &type) {
+  GLint success;
+  GLchar infoLog[512];
+
+  if (type != PROGRAM) {
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+      glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+      std::cout << "ERROR::SHADER::"<< ShaderTypeStrings.at(type) <<"::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    return;
+  }
+
+  glGetShaderiv(shader, GL_LINK_STATUS, &success);
+  if (!success)
+  {
+    glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+    std::cout << "ERROR::SHADER::"<< ShaderTypeStrings.at(type) <<"::COMPILATION_FAILED\n" << infoLog << std::endl;
+  }
+}
+
+GLuint setupShader() {
+
+  const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+  glCompileShader(vertexShader);
+  checkShader(vertexShader, VERTEX);
+
+
+  const GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+  glCompileShader(fragmentShader);
+  checkShader(fragmentShader, FRAGMENT);
+
+
+  const GLuint shaderProgram = glCreateProgram();
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  glLinkProgram(shaderProgram);
+  checkShader(shaderProgram, PROGRAM);
+
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+
+  return shaderProgram;
+}
+
+// END SHADER //
+
+// INPUTS //
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
+{
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, GL_TRUE);
+}
+// END INPUTS //

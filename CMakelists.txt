@@ -1,51 +1,90 @@
-cmake_minimum_required(VERSION 3.11...4.0)
+cmake_minimum_required(VERSION 3.3...4.0)
 project(FCG2025-1)
 
 # Define o padrão do C++
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Ativa o FetchContent
+# Configura o FetchContent
 include(FetchContent)
 
-# Configura o FetchContent para baixar e compilar GLFW automaticamente
+# Configura o GLFW
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.4  # Define a versão desejada da GLFW
+        GIT_TAG 3.4  # Versão mais estável
 )
-
-# Faz o download e compila as bibliotecas
 FetchContent_MakeAvailable(glfw)
 
-
+# Configura o GLM
 FetchContent_Declare(
         glm
-        GIT_REPOSITORY	https://github.com/g-truc/glm.git
-        GIT_TAG 	1.0.1
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.1
 )
-
 FetchContent_MakeAvailable(glm)
 
-# Configura o FetchContent para baixar a stb_image automaticamente
+# Configura a STB
 FetchContent_Declare(
-        stb_image
+        stb
         GIT_REPOSITORY https://github.com/nothings/stb.git
         GIT_TAG master
 )
+FetchContent_MakeAvailable(stb)
 
-FetchContent_MakeAvailable(stb_image)
+add_compile_options(-Wno-pragmas)
 
+# Configuração do GLAD
+set(GLAD_DIR "${CMAKE_SOURCE_DIR}/common/glad.c")
+set(GLAD_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include/glad/glad.h")
 
-# Adiciona as pastas de cabeçalhos
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/common)
-include_directories(${CMAKE_SOURCE_DIR}/include/glad)
-include_directories(${glm_SOURCE_DIR})
-include_directories(${stb_image_SOURCE_DIR})
+# Configuração do Utils
+set(POLY_DIR
+        "${CMAKE_SOURCE_DIR}/common/polygons/Polygon.cpp"
+        "${CMAKE_SOURCE_DIR}/common/polygons/SimplePolygon.cpp"
+        "${CMAKE_SOURCE_DIR}/common/polygons/ArcPolygon.cpp"
+        "${CMAKE_SOURCE_DIR}/common/polygons/StarPolygon.cpp"
+)
+set(POLY_INCLUDE_DIR
+        "${CMAKE_SOURCE_DIR}/include/polygons/Polygon.h"
+        "${CMAKE_SOURCE_DIR}/include/polygons/SimplePolygon.h"
+        "${CMAKE_SOURCE_DIR}/include/polygons/ArcPolygon.h"
+        "${CMAKE_SOURCE_DIR}/include/polygons/StarPolygon.h"
+)
 
+# Verifica se os arquivos do GLAD existem
+if(NOT EXISTS ${GLAD_DIR} OR NOT EXISTS ${GLAD_INCLUDE_DIR})
+    message(FATAL_ERROR "Arquivos do GLAD não encontrados!\n"
+            "Por favor, baixe a GLAD manualmente em https://glad.dav1d.de/\n"
+            "Configuração necessária:\n"
+            "- API: OpenGL\n"
+            "- Profile: Core\n"
+            "- Version: 4.1 (ou superior)\n"
+            "- Gerar um loader\n"
+            "Coloque glad.h em include/glad/ e glad.c em common/")
+endif()
 
-# Lista de exemplos/exercícios podem ser colocados aqui também
+# Configura includes
+include_directories(
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include/glad
+        ${CMAKE_SOURCE_DIR}/include/polygons
+        ${CMAKE_SOURCE_DIR}/common
+        ${glm_SOURCE_DIR}
+        ${stb_SOURCE_DIR}
+)
+
+# Configuração de bibliotecas por sistema operacional
+if(WIN32)
+    set(OPENGL_LIBS opengl32)
+elseif(APPLE)
+    find_library(OPENGL_LIBS OpenGL)
+else()
+    find_package(OpenGL REQUIRED)
+    set(OPENGL_LIBS OpenGL::GL)
+endif()
+
+# Lista de exercícios
 set(EXERCISES
         HelloTriangle
         HelloTransform
@@ -54,39 +93,47 @@ set(EXERCISES
         HelloSprite
         HelloSpritesheet
         Lista1/Ex6
+        Lista1/Ex7
+        Lista1/Ex8
         Lista1/Ex9
+        Lista1/Ex10
 )
 
-add_compile_options(-Wno-pragmas)
-
-# Define as bibliotecas para cada sistema operacional
-if(WIN32)
-    set(OPENGL_LIBS opengl32)
-elseif(APPLE)
-    find_library(OpenGL_LIBRARY OpenGL)
-    set(OPENGL_LIBS ${OpenGL_LIBRARY})
-else()
-    find_package(OpenGL REQUIRED)
-    set(OPENGL_LIBS ${OPENGL_gl_LIBRARY})
-endif()
-
-# Caminho esperado para a GLAD
-set(GLAD_C_FILE "${CMAKE_SOURCE_DIR}/common/glad.c")
-
-# Verifica se os arquivos da GLAD estão no lugar
-if (NOT EXISTS ${GLAD_C_FILE})
-    message(FATAL_ERROR "Arquivo glad.c não encontrado! Baixe a GLAD manualmente em https://glad.dav1d.de/ e coloque glad.h em include/glad/ e glad.c em common/")
-endif()
-
-# Cria os executáveis
+# Para cada exercício
 foreach(EXERCISE ${EXERCISES})
-    # Extrai o nome do arquivo sem o diretório para o executável
     get_filename_component(EXE_NAME ${EXERCISE} NAME)
 
-    # Adiciona o executável usando o nome do arquivo como nome do executável
-    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE})
+    # Caminho do arquivo fonte
+    set(SOURCE_FILE "src/${EXERCISE}.cpp")
 
-    # Configura as bibliotecas e include dirs para o executável
-    target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})
-    target_link_libraries(${EXE_NAME} glfw ${OPENGL_LIBS} glm::glm)
+    # Verifica se o arquivo fonte existe
+    if(NOT EXISTS ${CMAKE_SOURCE_DIR}/${SOURCE_FILE})
+        message(WARNING "Arquivo fonte ${SOURCE_FILE} não encontrado, pulando...")
+        continue()
+    endif()
+
+    # Cria o executável
+    add_executable(${EXE_NAME} ${SOURCE_FILE} ${GLAD_DIR} ${POLY_DIR})
+
+    # Configura includes e bibliotecas
+    target_include_directories(${EXE_NAME} PRIVATE
+            ${CMAKE_SOURCE_DIR}/include/glad
+            ${CMAKE_SOURCE_DIR}/include/polygons
+            ${glm_SOURCE_DIR}
+            ${stb_SOURCE_DIR}
+    )
+
+    target_link_libraries(${EXE_NAME} PRIVATE
+            glfw
+            ${OPENGL_LIBS}
+            glm::glm
+    )
+
+    # No Windows, precisa vincular com kernel32 e user32
+    if(WIN32)
+        target_link_libraries(${EXE_NAME} PRIVATE kernel32 user32)
+    endif()
 endforeach()
+
+# Mensagem de sucesso
+message(STATUS "Configuração do projeto concluída com sucesso!")

@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include <utils/ArcPolygon.h>
+#include <polygons/ArcPolygon.h>
 
 ArcPolygon::ArcPolygon(const float x, const float y, const float radius,
                                const bool filled, const GLfloat startAngle,
