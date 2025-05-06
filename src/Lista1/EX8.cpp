@@ -1,6 +1,9 @@
 //
 // Created by abraa on 5/3/2025.
 //
+/*
+Desenhe uma espiral
+*/
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -10,12 +13,6 @@
 
 using namespace std;
 
-
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-GLuint setupShader();
-
-// Dimensões da janela (pode ser alterado em tempo de execução)
-constexpr GLuint WIDTH = 800, HEIGHT = 800;
 
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
 auto *vertexShaderSource = R"(
@@ -38,7 +35,13 @@ auto *fragmentShaderSource = R"(
  }
  )";
 
+constexpr GLuint WIDTH = 800, HEIGHT = 800;
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+GLuint setupShader();
+
 int main() {
+
 }
 
 // SHADER //

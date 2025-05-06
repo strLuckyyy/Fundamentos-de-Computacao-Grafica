@@ -6,6 +6,9 @@
 #define POLYGON_H
 #pragma once
 
+#include <iostream>
+#include <string>
+#include <unordered_map>
 #include "glm/vec2.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -20,7 +23,7 @@ public:
   void setCenter(glm::vec2 newCenter);
 
   // Metodo que desenha a forma na tela
-  void draw(GLuint colorProgram) const;
+  virtual void draw(GLuint colorProgram) const;
 
 protected:
   // Propriedades do polígono
@@ -36,10 +39,10 @@ protected:
   GLuint VAO, VBO;
   std::vector<float> vertices;
 
-  // Metodo para inicializar buffers
+  // BUFFERS
   virtual void setupBuffers();
 
-  // Metodo para configuração da forma
+  // POLYGON
   virtual void generateSegments() = 0;
 };
 

@@ -10,6 +10,8 @@ class StarPolygon final : public Polygon {
 public:
   StarPolygon(float x, float y, float radius, int points, bool filled, float innerRadius);
 
+  void draw(GLuint colorProgram) const override;
+
 private:
   float innerRadius;
 

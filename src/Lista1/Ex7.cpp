@@ -158,6 +158,7 @@ int main() {
 
     pacman.draw(shaderID);
     pizza.draw(shaderID);
+    star.draw(shaderID);
 
     glfwSwapBuffers(window);
   }

@@ -44,12 +44,7 @@ set(POLY_DIR
         "${CMAKE_SOURCE_DIR}/common/polygons/SimplePolygon.cpp"
         "${CMAKE_SOURCE_DIR}/common/polygons/ArcPolygon.cpp"
         "${CMAKE_SOURCE_DIR}/common/polygons/StarPolygon.cpp"
-)
-set(POLY_INCLUDE_DIR
-        "${CMAKE_SOURCE_DIR}/include/polygons/Polygon.h"
-        "${CMAKE_SOURCE_DIR}/include/polygons/SimplePolygon.h"
-        "${CMAKE_SOURCE_DIR}/include/polygons/ArcPolygon.h"
-        "${CMAKE_SOURCE_DIR}/include/polygons/StarPolygon.h"
+        "${CMAKE_SOURCE_DIR}/common/polygons/SpiralPolygon.cpp"
 )
 
 # Verifica se os arquivos do GLAD existem

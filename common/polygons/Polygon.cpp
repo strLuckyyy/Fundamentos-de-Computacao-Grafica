@@ -28,8 +28,9 @@ void Polygon::setCenter(const glm::vec2 newCenter) {
 
 void Polygon::draw(const GLuint colorProgram) const {
   const GLint colorLoc = glGetUniformLocation(colorProgram, "inputColor");
-  glUniform4fv(colorLoc, 1, color);
 
+  glUniform4fv(colorLoc, 1, color);
+  glLineWidth(2.0f);
   glBindVertexArray(VAO);
 
   if (isFilled) {
@@ -58,4 +59,6 @@ void Polygon::setupBuffers() {
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+
+  glPointSize(10.0f);
 }
