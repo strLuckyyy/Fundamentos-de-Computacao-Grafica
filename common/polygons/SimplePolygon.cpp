@@ -10,7 +10,7 @@ SimplePolygon::SimplePolygon(const float x, const float y, const float radius, c
   : Polygon(x, y, radius, segments, filled) {
 
   SimplePolygon::generateSegments();
-  setupBuffers();
+  SimplePolygon::setupBuffers();
 }
 
 void SimplePolygon::updateGeometry(const float newRadius,
@@ -25,26 +25,9 @@ void SimplePolygon::updateGeometry(const float newRadius,
   setupBuffers();
 }
 
-void SimplePolygon::setupBuffers() { Polygon::setupBuffers(); }
-
 void SimplePolygon::generateSegments() {
-  // Limpa vértices anteriores
-  vertices.clear();
+  Polygon::generateSegments();
 
-  // Centralizando
-  vertices.push_back(center.x);
-  vertices.push_back(center.y);
-  vertices.push_back(.0f);
-
-
-  // Adiciona o centro se for preenchido
-  if (isFilled) {
-    vertices.push_back(center.x); // x
-    vertices.push_back(center.y); // y
-    vertices.push_back(.0f); // z
-  }
-
-  // Gera os vértices do círculo
   for (int i = 0; i <= segments; ++i) {
     constexpr float PI = 3.141592653589793f;
     const float theta =
@@ -56,3 +39,4 @@ void SimplePolygon::generateSegments() {
   }
 }
 
+void SimplePolygon::setupBuffers() { Polygon::setupBuffers(); }

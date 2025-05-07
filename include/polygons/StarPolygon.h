@@ -4,6 +4,8 @@
 
 #ifndef STARPOLYGON_H
 #define STARPOLYGON_H
+#pragma once
+
 #include "Polygon.h"
 
 class StarPolygon final : public Polygon {

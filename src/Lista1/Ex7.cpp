@@ -118,7 +118,6 @@ int main() {
   auto star = StarPolygon(.75f, .3f, .2f, 5, true, .4f);
   star.setColor(1.0f, 1.f, 1.f, .0f);
 
-
   // Loop
   double prev_s = glfwGetTime();
   double title_countdown_s = .1f;

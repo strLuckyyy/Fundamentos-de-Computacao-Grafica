@@ -34,7 +34,7 @@ void Polygon::draw(const GLuint colorProgram) const {
   glBindVertexArray(VAO);
 
   if (isFilled) {
-    glDrawArrays(GL_TRIANGLE_FAN, 0, segments + 2); // +2 (centro + fechamento)
+    glDrawArrays(GL_TRIANGLE_FAN, 0, segments + 2);
   } else {
     glDrawArrays(GL_LINE_LOOP, 1, segments + 1);
   }
@@ -61,4 +61,22 @@ void Polygon::setupBuffers() {
   glBindVertexArray(0);
 
   glPointSize(10.0f);
+}
+
+void Polygon::generateSegments()
+{
+  // Limpa vértices anteriores
+  vertices.clear();
+
+  // Centralizando
+  vertices.push_back(center.x);
+  vertices.push_back(center.y);
+  vertices.push_back(.0f);
+
+  // Adiciona o centro se for preenchido
+  if (isFilled) {
+    vertices.push_back(center.x); // x
+    vertices.push_back(center.y); // y
+    vertices.push_back(.0f); // z
+  }
 }

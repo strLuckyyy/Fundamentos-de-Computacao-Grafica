@@ -43,7 +43,7 @@ protected:
   virtual void setupBuffers();
 
   // POLYGON
-  virtual void generateSegments() = 0;
+  virtual void generateSegments();
 };
 
 #endif //POLYGON_H

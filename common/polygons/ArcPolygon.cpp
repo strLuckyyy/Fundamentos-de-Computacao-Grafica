@@ -5,30 +5,15 @@
 #include <cmath>
 #include <polygons/ArcPolygon.h>
 
-ArcPolygon::ArcPolygon(const float x, const float y, const float radius,
-                               const bool filled, const GLfloat startAngle,
-                               const GLfloat endAngle)
+ArcPolygon::ArcPolygon(const float x, const float y, const float radius, const bool filled,
+  const GLfloat startAngle, const GLfloat endAngle)
     : Polygon(x, y, radius, 30, filled), startAngle(startAngle), endAngle(endAngle) {
   ArcPolygon::generateSegments();
-  setupBuffers();
+  ArcPolygon::setupBuffers();
 }
 
-void ArcPolygon::setupBuffers() { Polygon::setupBuffers(); }
-
 void ArcPolygon::generateSegments() {
-  vertices.clear(); // Limpa vértices existentes
-
-  // Adiciona o centro (necessário para GL_TRIANGLE_FAN)
-  vertices.push_back(center.x);
-  vertices.push_back(center.y);
-  vertices.push_back(0.0f);
-
-  // Adiciona o centro se for preenchido
-  if (isFilled) {
-    vertices.push_back(center.x); // x
-    vertices.push_back(center.y); // y
-    vertices.push_back(.0f);      // z
-  }
+  Polygon::generateSegments();
 
   // Gera os vértices do arco
   for (int i = 0; i <= segments; ++i) {
@@ -42,3 +27,5 @@ void ArcPolygon::generateSegments() {
     vertices.push_back(0.0f);                                   // Z
   }
 }
+
+void ArcPolygon::setupBuffers() { Polygon::setupBuffers(); }
